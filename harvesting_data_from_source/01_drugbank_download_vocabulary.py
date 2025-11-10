@@ -29,8 +29,6 @@ SOFTWARE.
 
 import os
 import re
-import subprocess
-from sys import platform
 
 import requests
 
@@ -40,23 +38,19 @@ re_url = re.compile(r'\bhttps://go.drugbank.com/releases/[a-z0-9-/]+all-drugbank
 
 url = re_url.findall(response.text)[0]
 
-print(f"Platform is {platform}.")
-if "win" in platform:  # if we are on Windows, use curl.exe (supported in Windows 10 and up)
-    tmpfile = "C:/temp/tmp.zip"
-    wget = subprocess.Popen(["curl.exe", "--output", tmpfile, "--url", url])
-else:
-    tmpfile = "/tmp/tmp.zip"
-    wget = subprocess.Popen(["wget", "-O", tmpfile, url])
+tmpfile = "/tmp/tmp.zip"
+print(f"Downloading Drugbank dump from {url} to {tmpfile}...")
+response = requests.get(url)
+response.raise_for_status()  # Raise an exception for bad status codes
 
-os.waitpid(wget.pid, 0)
+with open(tmpfile, 'wb') as f:
+    f.write(response.content)
 
 print(f"Downloaded Drugbank dump from {url} to {tmpfile}.")
 
-if "win" in platform:  # if we are on Windows, use curl.exe (supported in Windows 10 and up)
-    unzip = subprocess.Popen(["unzip", -"o", tmpfile, "-d", "."])
-else:
-    unzip = subprocess.Popen(["unzip", "-o", tmpfile, "-d", "."])
-
-os.waitpid(unzip.pid, 0)
+import zipfile
+print(f"Unzipping Drugbank dump from {tmpfile} to current directory...")
+with zipfile.ZipFile(tmpfile, 'r') as zip_ref:
+    zip_ref.extractall(".")
 
 print(f"Unzipped Drugbank dump from {tmpfile} to current directory.")

@@ -31,9 +31,8 @@ SOFTWARE.
 import csv
 import datetime
 import os
-import subprocess
+import requests
 import xml.sax
-from sys import platform
 
 # Example URL of MeSH dump: https://nlmpubs.nlm.nih.gov/projects/mesh/MESH_FILES/xmlmesh/desc2023.xml
 
@@ -47,13 +46,12 @@ if os.path.exists(mesh_xml_file_name):
 print(
     f"Downloading MeSH XML dump from {url}. If this URL doesn't work, please navigate to https://www.nlm.nih.gov/ and search the site for a MeSH data dump in XML format.")
 
-print(f"Platform is {platform}.")
-if "win" in platform:  # if we are on Windows, use curl.exe (supported in Windows 10 and up)
-    wget = subprocess.Popen(["curl.exe", "--output", mesh_xml_file_name, "--url", url])
-else:
-    wget = subprocess.Popen(["wget", url])
+print("Downloading MeSH XML dump...")
+response = requests.get(url)
+response.raise_for_status()  # Raise an exception for bad status codes
 
-os.waitpid(wget.pid, 0)
+with open(mesh_xml_file_name, 'wb') as f:
+    f.write(response.content)
 
 print(f"Downloaded MeSH XML dump from {url}.")
 
