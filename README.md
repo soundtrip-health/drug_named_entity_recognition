@@ -1,3 +1,5 @@
+> **Note:** This is a fork of [soundtrip-health/drug_named_entity_recognition](https://github.com/soundtrip-health/drug_named_entity_recognition) that fixes broken data building scripts and updates the fuzzy matching code.
+
 ![Fast Data Science logo](https://raw.githubusercontent.com/fastdatascience/brand/main/primary_logo.svg)
 
 <a href="https://fastdatascience.com"><span align="left">🌐 fastdatascience.com</span></a>
@@ -342,6 +344,18 @@ To the extent possible under law, the person who associated CC0 with the DrugBan
 ## Contributing to the Drug Named Entity Recognition library
 
 If you'd like to contribute to this project, you can contact us at https://fastdatascience.com/ or make a pull request on our [Github repository](https://github.com/fastdatascience/drug_named_entity_recognition). You can also [raise an issue](https://github.com/fastdatascience/drug_named_entity_recognition/issues). 
+
+## Future Improvements
+
+### Data Storage Format Migration
+
+Currently, the drug dictionary data and FuzzySet data structures are stored using Python's `pickle` format. Future work includes:
+
+- **Migrate drug dictionary storage from pickle to JSON**: The drug dictionary data (`drug_variant_to_canonical`, `drug_canonical_to_data`, `drug_variant_to_variant_data`) should be stored in a standard JSON format instead of pickle for better portability, version control compatibility, and security.
+
+- **Add JSON serialization support for FuzzySet**: The FuzzySet data structures (used for fuzzy matching) should be serializable to JSON format. This would allow pre-building FuzzySets during data preparation (`harvesting_data_from_source/07_combine_data_sources.py`) and loading them directly in `drugs_finder.py`, eliminating the need to rebuild them on every import and improving startup performance.
+
+These improvements would make the data format more transparent, easier to inspect, and compatible with a wider range of tools and workflows.
 
 ## Developing the Drug Named Entity Recognition library
 
