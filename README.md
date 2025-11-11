@@ -1,6 +1,6 @@
-> **Note:** This is a fork of [soundtrip-health/drug_named_entity_recognition](https://github.com/soundtrip-health/drug_named_entity_recognition) that fixes broken data building scripts and updates the fuzzy matching code.
+> **Note:** This is a fork of [soundtrip-health/drug_named_entity_recognition](https://github.com/soundtrip-health/drug_named_entity_recognition) that fixes broken data building scripts and updates the fuzzy matching code. Note that the API has changed slightly; matches now always have a match_similarity field and do not have a match_type field and exact matches are indicated by a match_similarity of 1.0. 
 
-![Fast Data Science logo](https://raw.githubusercontent.com/fastdatascience/brand/main/primary_logo.svg)
+![FPI has changed slightly; adding the fuzzyast Data Science logo](https://raw.githubusercontent.com/fastdatascience/brand/main/primary_logo.svg)
 
 <a href="https://fastdatascience.com"><span align="left">🌐 fastdatascience.com</span></a>
 <a href="https://www.linkedin.com/company/fastdatascience/"><img align="left" src="https://raw.githubusercontent.com//harmonydata/.github/main/profile/linkedin.svg" alt="Fast Data Science | LinkedIn" width="21px"/></a>
