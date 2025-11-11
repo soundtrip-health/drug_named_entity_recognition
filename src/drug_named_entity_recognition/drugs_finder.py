@@ -301,7 +301,7 @@ def find_drugs(
                 ) | drug_variant_to_variant_data.get(cand_norm, {})
                 match_data["match_similarity"] = 1.0
                 match_data["matching_string"] = cand
-                lookup_name = match_data.get("name") or m
+                lookup_name = match_data.get("name", m)
 
                 match_data = get_molecular_weight(
                     match_data, lookup_name, use_pub_chem_api
@@ -324,13 +324,13 @@ def find_drugs(
                         match_data["match_similarity"] = similarity
                         match_data["match_variant"] = fuzzy_matched_variant
                         match_data["matching_string"] = cand
+                        lookup_name = match_data.get("name", m)
 
                         match_data = get_molecular_weight(
                             match_data, lookup_name, use_pub_chem_api
                         )
 
-                        if is_use_omop_api:
-                            lookup_name = match_data.get("name") or m
+                        if is_use_omop_api: 
                             match_data["omop_id"] = cached_get_omop_id(lookup_name)
                         drug_matches.append((match_data, token_idx, token_idx + 2))
                         is_exclude.update([token_idx, token_idx + 1])
@@ -347,7 +347,7 @@ def find_drugs(
                 ) | drug_variant_to_variant_data.get(cand_norm, {})
                 match_data["match_similarity"] = 1.0
                 match_data["matching_string"] = token
-                lookup_name = match_data.get("name") or m
+                lookup_name = match_data.get("name", m)
 
                 match_data = get_molecular_weight(
                     match_data, lookup_name, use_pub_chem_api
@@ -369,7 +369,7 @@ def find_drugs(
                         match_data["match_similarity"] = similarity
                         match_data["match_variant"] = fuzzy_matched_variant
                         match_data["matching_string"] = token
-                        lookup_name = match_data.get("name") or m
+                        lookup_name = match_data.get("name", m)
 
                         match_data = get_molecular_weight(
                             match_data, lookup_name, use_pub_chem_api
