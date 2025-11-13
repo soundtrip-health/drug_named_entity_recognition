@@ -51,25 +51,6 @@ from drug_named_entity_recognition.util import stopwords
 
 logger = logging.getLogger(__name__)
 
-EXCLUDE_WORDS = [
-    "ml",
-    "mg",
-    "dl",
-    "cc",
-    "mcg",
-    "gm",
-    "nacl",
-    "tbis",
-    "tbi",
-    "ptsd",
-    "ppd",
-    "cc",
-    "relaxing",
-    "ppd",
-    "bp",
-    "copd",
-]
-
 dbid_to_mol_lookup = {}
 
 this_path = pathlib.Path(__file__).parent.resolve()
@@ -230,10 +211,6 @@ def get_fuzzy_match(surface_form: str, fuzzy_threshold: float = 0.5):
         return None, None
 
     surface_form_lower = surface_form.lower()
-
-    # Skip if in exclude words
-    if surface_form_lower in EXCLUDE_WORDS:
-        return None, None
 
     # Try to find in drug_names FuzzySet
     drug_results = drug_names_fuzzyset.get(surface_form_lower)
