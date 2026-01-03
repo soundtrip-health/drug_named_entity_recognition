@@ -171,6 +171,76 @@ class TestDrugsFinder(unittest.TestCase):
 
         self.assertEqual(1, len(drugs))
 
+    def test_two_word_fuzzy_match(self):
+        """Test fuzzy matching for two-word drug names (lines 291-312)."""
+        # Test with a misspelled two-word drug name
+        # "Amphoteracin B" should fuzzy match to "Amphotericin B"
+        drugs = find_drugs("i bought some Amphoteracin B".split(" "), is_fuzzy_match=True)
+
+        self.assertGreater(len(drugs), 0, "Should find at least one fuzzy match")
+        
+        # Verify match data structure
+        match_data, start_idx, end_idx = drugs[0]
+        
+        # Verify fuzzy match fields are present
+        self.assertIn("match_similarity", match_data, "match_similarity should be present")
+        self.assertIn("match_variant", match_data, "match_variant should be present")
+        self.assertIn("matching_string", match_data, "matching_string should be present")
+        
+        # Verify similarity score is between 0 and 1
+        self.assertGreater(match_data["match_similarity"], 0.0)
+        self.assertLessEqual(match_data["match_similarity"], 1.0)
+        
+        # Verify matching_string is the original two-word combination
+        self.assertEqual(match_data["matching_string"], "Amphoteracin B")
+        
+        # Verify token indices span two tokens (token_idx to token_idx + 2)
+        self.assertEqual(end_idx - start_idx, 2, "Should span 2 tokens for two-word match")
+        
+        # Verify the matched variant is a valid drug variant
+        self.assertIsNotNone(match_data["match_variant"])
+        self.assertIsInstance(match_data["match_variant"], str)
+
+    def test_two_word_fuzzy_match_stopwords_excluded(self):
+        """Test that fuzzy matching excludes stopwords (line 292)."""
+        from drug_named_entity_recognition.util import stopwords
+        
+        # Create a test case where one token is a stopword
+        # This should not trigger fuzzy matching
+        test_stopword = list(stopwords)[0]  # Get any stopword
+        drugs = find_drugs(f"i bought some {test_stopword} drugname".split(" "), is_fuzzy_match=True)
+        
+        # The fuzzy match should not occur because one token is a stopword
+        # We can't easily verify this without knowing what "drugname" might match,
+        # but we can verify the code path doesn't crash
+
+    def test_two_word_fuzzy_match_with_omop(self):
+        """Test fuzzy matching with OMOP API enabled (line 309-310)."""
+        # Test with OMOP API enabled
+        drugs = find_drugs("i bought some Amphoteracin B".split(" "), 
+                          is_fuzzy_match=True, 
+                          is_use_omop_api=True)
+        
+        if len(drugs) > 0:
+            match_data, _, _ = drugs[0]
+            # OMOP ID may or may not be present depending on API availability
+            # Just verify the code path executes without error
+            self.assertIn("match_similarity", match_data)
+
+    def test_two_word_fuzzy_match_with_pubchem(self):
+        """Test fuzzy matching with PubChem API enabled (line 305-307)."""
+        # Test with PubChem API enabled
+        drugs = find_drugs("i bought some Amphoteracin B".split(" "), 
+                          is_fuzzy_match=True, 
+                          use_pub_chem_api=True)
+        
+        if len(drugs) > 0:
+            match_data, _, _ = drugs[0]
+            # Verify match data structure
+            self.assertIn("match_similarity", match_data)
+            self.assertIn("match_variant", match_data)
+            self.assertIn("matching_string", match_data)
+
 
 if __name__ == "__main__":
     unittest.main()

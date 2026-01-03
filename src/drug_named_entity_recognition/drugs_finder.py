@@ -33,7 +33,6 @@ import logging
 import os
 import pathlib
 import pickle as pkl
-from collections import Counter
 
 try:
     from cfuzzyset import cFuzzySet as FuzzySet
